@@ -40,8 +40,8 @@ makesPositiveInteger ('2023 год');
 //Функция, которая принимает три параметра: исходную строку, минимальную длину и строку с добавочными символами — и возвращает исходную строку, дополненную указанными символами до заданной длины.
 const getSymbols = (originalString, minLength, symbols) => {
   if (originalString.length < minLength) {
-    const newString = minLength - originalString.length;
-    return symbols.slice(0, newString % symbols.length) + symbols.repeat(newString / symbols.length) + originalString;
+    const newStringLength = minLength - originalString.length;
+    return symbols.slice(0, newStringLength % symbols.length) + symbols.repeat(newStringLength / symbols.length) + originalString;
 
   }
   return originalString;
