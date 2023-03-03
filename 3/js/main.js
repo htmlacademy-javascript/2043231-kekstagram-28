@@ -2,6 +2,8 @@ const PICTURE_COUNT = 25;
 const AVATAR_COUNT = 6;
 const LIKE_MIN_COUNT = 15;
 const LIKE_MAX_COUNT = 200;
+const COMMENT_COUNT_MIN = 1;
+const COMMENT_COUNT_MAX = 17;
 const COMMENT_LINES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -50,10 +52,10 @@ const getRandomArrayElement = (array) =>
   array[getRandomInteger(0, array.length - 1)];
 
 const createIdGenerator = () => {
-  let lastGeneratedID = 0;
+  let lastGeneratedId = 0;
   return () => {
-    lastGeneratedID += 1;
-    return lastGeneratedID;
+    lastGeneratedId += 1;
+    return lastGeneratedId;
   };
 };
 
@@ -68,25 +70,23 @@ const createComment = () => ({
   id: generateCommentId(),
   avatar: `img/avatar-${getRandomInteger(1, AVATAR_COUNT)}.svg`,
   message: createMessage(),
-  name: getRandomArrayElement(NAMES),
+  name: getRandomArrayElement(NAMES)
 });
 // console.log(createComment());
 
-const createPhotoNumber = () => {
-  for (let photoNumber = 1; photoNumber <= PICTURE_COUNT; photoNumber++) {
-    return photoNumber;
-  }
-};
-// console.log(createPhotoNumber());
-
-const createPublishedPicture = () => ({
-  id: getRandomInteger(1, PICTURE_COUNT),
-  url: `photos/${createPhotoNumber()}.jpg`,
-  description: getRandomArrayElement(DESCRIPTIONS),
+const createPublishedPicture = (id) => ({
+  id,
+  url: `photos/${id}.jpg`,
+  description: DESCRIPTIONS[id - 1],
   likes: getRandomInteger(LIKE_MIN_COUNT, LIKE_MAX_COUNT),
-  comments: createComment(),
+  comments: Array.from({length: getRandomInteger(COMMENT_COUNT_MIN, COMMENT_COUNT_MAX)}, createComment)
 });
 
 createPublishedPicture();
 // console.log(createPublishedPicture());
 
+const createPublishedPictures = () =>
+  Array.from({length: PICTURE_COUNT}, (_, pictureIndex) => createPublishedPicture(pictureIndex + 1));
+
+createPublishedPictures();
+// console.log(createPublishedPictures());
