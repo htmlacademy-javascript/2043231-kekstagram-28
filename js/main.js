@@ -1,3 +1,3 @@
-import {createPublishedPictures} from '.data.js';
+import {createPublishedPictures} from './data.js';
 
 createPublishedPictures();
