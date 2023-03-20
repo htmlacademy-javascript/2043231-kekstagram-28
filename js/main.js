@@ -1,4 +1,4 @@
 import {createPublishedPictures} from './data.js';
-import {renderPreviews} from './preview.js';
+import {renderGallery} from './gallery.js';
 
-renderPreviews(createPublishedPictures());
+renderGallery(createPublishedPictures());
