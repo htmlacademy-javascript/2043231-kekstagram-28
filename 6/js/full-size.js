@@ -3,17 +3,16 @@ const COMMENTS_PER_PORTION = 5;
 const bigPicture = document.querySelector('.big-picture');
 const commentCount = document.querySelector('.social__comment-count');
 const commentList = document.querySelector('.social__comments');
+const commentItem = document.querySelector('.social__comment');
 const commentsLoader = document.querySelector('.comments-loader');
 const body = document.querySelector('body');
 const cancelButton = document.querySelector('.big-picture__cancel');
 
 let commentsShown = 0;
-const comments = [];
+let comments = [];
 
 const createComment = ({avatar, name, message}) => {
-  const comment = document.createElement('li');
-  comment.innerHTML = '<img class="social__picture" src="" alt="" width="35" height="35">';
-  comment.classList.add('social__comment');
+  const comment = commentItem.cloneNode(true);
 
   comment.querySelector('.social__picture').src = avatar;
   comment.querySelector('.social__picture').alt = name;
@@ -61,6 +60,8 @@ const onCancelButtonClick = () => {
   hideBigPicture();
 };
 
+const onCommentsLoaderClick = () => renderComments ();
+
 const renderPictureDetails = ({url, likes, description}) => {
   bigPicture.querySelector('.big-picture__img img').src = url;
   bigPicture.querySelector('.big-picture__img img').alt = description;
@@ -72,13 +73,16 @@ const showFullSize = (data) => {
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
   commentsLoader.classList.add('hidden');
-  commentCount.classList.add('hidden');
   document.addEventListener('keydown', onDocumentKeydown);
 
   renderPictureDetails(data);
-  renderComments(data.comments);
+  comments = data.comments;
+  if (comments.length > 0) {
+    renderComments();
+  }
 };
 
 cancelButton.addEventListener('click', onCancelButtonClick);
+commentsLoader.addEventListener('click', onCommentsLoaderClick);
 
 export {showFullSize};
