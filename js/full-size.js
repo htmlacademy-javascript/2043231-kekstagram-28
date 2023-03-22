@@ -72,7 +72,6 @@ const renderPictureDetails = ({url, likes, description}) => {
 const showFullSize = (data) => {
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
-  commentsLoader.classList.add('hidden');
   document.addEventListener('keydown', onDocumentKeydown);
 
   renderPictureDetails(data);
