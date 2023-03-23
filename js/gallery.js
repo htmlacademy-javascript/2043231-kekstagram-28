@@ -10,6 +10,7 @@ const renderGallery = (pictures) => {
       return;
     }
 
+    evt.preventDefault();
     const picture = pictures.find(
       (item) => item.id === +preview.dataset.previewId
     );
