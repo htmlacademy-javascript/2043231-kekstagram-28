@@ -74,7 +74,7 @@ pristine.addValidator(
 );
 
 const onFormSubmit = (evt) => {
-  evt.preventDefaulr();
+  evt.preventDefault();
   pristine.validate();
 };
 
