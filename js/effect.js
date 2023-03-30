@@ -79,9 +79,8 @@ const updateSlider = () => {
 
   if (isDefault()) {
     hideSlider();
-  } else {
-    showSlider();
   }
+  showSlider();
 };
 
 const onEffectsChange = (evt) => {
