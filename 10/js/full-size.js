@@ -1,3 +1,5 @@
+import {isEscapeKey} from './util.js';
+
 const COMMENTS_PER_PORTION = 5;
 
 const bigPicture = document.querySelector('.big-picture');
@@ -27,9 +29,8 @@ const renderComments = () => {
   if (commentsShown >= comments.length) {
     commentsLoader.classList.add('hidden');
     commentsShown = comments.length;
-  } else {
-    commentsLoader.classList.remove('hidden');
   }
+  commentsLoader.classList.remove('hidden');
 
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < commentsShown; i++) {
@@ -45,12 +46,12 @@ const renderComments = () => {
 const hideBigPicture = () => {
   bigPicture.classList.add('hidden');
   body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
+  document.removeEventListener('keydown', onBigPictureKeydown);
   commentsShown = 0;
 };
 
-function onDocumentKeydown(evt) {
-  if (evt.key === 'Escape') {
+function onBigPictureKeydown(evt) {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     hideBigPicture();
   }
@@ -72,7 +73,7 @@ const renderPictureDetails = ({url, likes, description}) => {
 const showFullSize = (data) => {
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeydown);
+  document.addEventListener('keydown', onBigPictureKeydown);
 
   renderPictureDetails(data);
   comments = data.comments;

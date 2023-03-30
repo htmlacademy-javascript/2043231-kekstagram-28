@@ -1,3 +1,6 @@
+import {isEscapeKey} from './util.js';
+import {onModalKeydown} from './form.js';
+
 const successMessage = document.querySelector('#success').content.querySelector('.success');
 const successButton = successMessage.querySelector('.success__button');
 const errorMessage = document.querySelector('#error').content.querySelector('.error');
@@ -6,7 +9,7 @@ const body = document.querySelector('body');
 
 const onSuccessAnywhereClick = (evt) => {
   if (evt.target === successMessage) {
-    successMessage.classList.add('hidden');
+    document.querySelector('.success').remove();
     document.removeEventListener('click', onSuccessAnywhereClick);
     document.removeEventListener('keydown', onSuccessKeydown);
   }
@@ -14,32 +17,33 @@ const onSuccessAnywhereClick = (evt) => {
 
 const onErrorAnywhereClick = (evt) => {
   if (evt.target === errorMessage) {
-    errorMessage.classList.add('hidden');
+    document.querySelector('.error').remove();
     document.removeEventListener('click', onErrorAnywhereClick);
     document.removeEventListener('keydown', onErrorKeydown);
   }
 };
 
 function onSuccessKeydown(evt) {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
-    successMessage.classList.add('hidden');
+    document.querySelector('.success').remove();
   }
 }
 
-function onErrorKeydown(evt) {
-  if (evt.key === 'Escape') {
+function onErrorKeydown (evt) {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
-    errorMessage.classList.add('hidden');
+    document.querySelector('.error').remove();
+    document.addEventListener('keydown', onModalKeydown);
   }
 }
 
 const onSuccessButtonClick = () => {
-  successMessage.classList.add('hidden');
+  document.querySelector('.success').remove();
 };
 
 const onErrorButtonClick = () => {
-  errorMessage.classList.add('hidden');
+  document.querySelector('.error').remove();
 };
 
 const showSuccessMessage = () => {
@@ -53,6 +57,7 @@ const showSuccessMessage = () => {
 const showErrorMessage = () => {
   errorMessage.cloneNode(true);
   body.append(errorMessage);
+  document.removeEventListener('keydown', onModalKeydown);
   document.addEventListener('keydown', onErrorKeydown);
   document.addEventListener('click', onErrorAnywhereClick);
 };

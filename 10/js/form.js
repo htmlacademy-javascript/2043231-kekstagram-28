@@ -1,14 +1,10 @@
 import {resetScale} from './scale.js';
 import {resetEffects} from './effect.js';
+import {isEscapeKey} from './util.js';
 
 const VALID_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 const MAX_HASHTAG_COUNT = 5;
 const TAG_ERROR_TEXT = 'Хэштег введён некорректно';
-
-const SubmitButtonText = {
-  SUBMITTING: 'Отправляю...',
-  IDLE: 'Ошибка' ,
-};
 
 const form = document.querySelector('.img-upload__form');
 const overlay = document.querySelector('.img-upload__overlay');
@@ -19,6 +15,11 @@ const hashtagField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
 const submitButton = document.querySelector('.img-upload__submit');
 
+const SubmitButtonText = {
+  SUBMITTING: 'Отправляю...',
+  IDLE: submitButton.textContent,
+};
+
 const pristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
@@ -28,8 +29,7 @@ const pristine = new Pristine(form, {
 const showModal = () => {
   overlay.classList.remove('hidden');
   body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeydown);
-
+  document.addEventListener('keydown', onModalKeydown);
 };
 
 const hideModal = () => {
@@ -39,15 +39,15 @@ const hideModal = () => {
   pristine.reset();
   overlay.classList.add('hidden');
   body.classList.remove('modal-open');
-  document.removeEventListener('keydown', onDocumentKeydown);
+  document.removeEventListener('keydown', onModalKeydown);
 };
 
 const isTextFieldFocused = () =>
   document.activeElement === hashtagField ||
   document.activeElement === commentField;
 
-function onDocumentKeydown(evt) {
-  if (evt.key === 'Escape' && !isTextFieldFocused()) {
+function onModalKeydown(evt) {
+  if (isEscapeKey(evt) && !isTextFieldFocused()) {
     evt.preventDefault();
     hideModal();
   }
@@ -106,4 +106,4 @@ const setOnFormSubmit = (cb) => {
 fileField.addEventListener('change', onFileInputChange);
 cancelButton.addEventListener('click', onCancelButtonClick);
 
-export {setOnFormSubmit, hideModal};
+export {setOnFormSubmit, hideModal, onModalKeydown};
