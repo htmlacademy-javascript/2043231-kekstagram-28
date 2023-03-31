@@ -29,8 +29,9 @@ const renderComments = () => {
   if (commentsShown >= comments.length) {
     commentsLoader.classList.add('hidden');
     commentsShown = comments.length;
+  } else {
+    commentsLoader.classList.remove('hidden');
   }
-  commentsLoader.classList.remove('hidden');
 
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < commentsShown; i++) {

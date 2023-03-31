@@ -26,24 +26,32 @@ const onErrorAnywhereClick = (evt) => {
 function onSuccessKeydown(evt) {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    document.querySelector('.success').remove();
+    if (successMessage) {
+      document.querySelector('.success').remove();
+    }
   }
 }
 
 function onErrorKeydown (evt) {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    document.querySelector('.error').remove();
-    document.addEventListener('keydown', onModalKeydown);
+    if (errorMessage) {
+      document.querySelector('.error').remove();
+      document.addEventListener('keydown', onModalKeydown);
+    }
   }
 }
 
 const onSuccessButtonClick = () => {
-  document.querySelector('.success').remove();
+  if (successMessage) {
+    document.querySelector('.success').remove();
+  }
 };
 
 const onErrorButtonClick = () => {
-  document.querySelector('.error').remove();
+  if (errorMessage) {
+    document.querySelector('.error').remove();
+  }
 };
 
 const showSuccessMessage = () => {
