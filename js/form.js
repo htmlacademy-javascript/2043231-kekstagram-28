@@ -2,9 +2,20 @@ import {resetScale} from './scale.js';
 import {resetEffects} from './effect.js';
 import {isEscapeKey} from './util.js';
 
-const VALID_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
-const MAX_HASHTAG_COUNT = 5;
-const TAG_ERROR_TEXT = 'Хэштег введён некорректно';
+const Hashtag = {
+  MAX_SYMBOLS: 20,
+  MAX_COUNT: 5,
+};
+
+const HashtagErrorText = {
+  START_WITH_GRID: 'Хэш-тег начинается с символа # (решётка).',
+  ONLY_LETTERS_AND_NUMBERS: 'Строка после решётки должна состоять только из букв и чисел.',
+  NOT_ONLY_GRID: 'Хэш-тег не может состоять только из одной решётки.',
+  MAX_COUNT_HASHTAGS: `Нельзя указать больше ${Hashtag.MAX_COUNT} хэш-тегов.`,
+  SEPARATED_BY_SPACES: 'Хэш-теги разделяются пробелами.',
+  MAX_LENGTH_ONE_HASHTAG: `Максимальная длина одного хэш-тега ${Hashtag.MAX_SYMBOLS} символов, включая решётку.`,
+  NOT_REPEAT: 'Хэш-теги не должны повторяться.',
+};
 
 const form = document.querySelector('.img-upload__form');
 const overlay = document.querySelector('.img-upload__overlay');
@@ -61,22 +72,89 @@ const onFileInputChange = () => {
   showModal();
 };
 
-const isValidTag = (tag) => VALID_SYMBOLS.test(tag);
-
-const hasValidCount = (tags) => tags.length <= MAX_HASHTAG_COUNT;
-
-const hasUniqueTags = (tags) => {
-  const lowerCaseTags = tags.map((tag) => tag.toLowerCase());
-  return lowerCaseTags.length === new Set(lowerCaseTags).size;
-};
-
-const validateTags = (value) => {
-  const tags = value
-    .trim()
+const getHashtagsArr = (hashtagsStr) => (
+  hashtagsStr.toUpperCase()
     .split(' ')
-    .filter((tag) => tag.trim().length);
-  return hasValidCount(tags) && hasUniqueTags(tags) && tags.every(isValidTag);
-};
+    .filter((hashtag) => hashtag !== '')
+);
+
+const validateHashtagUnique = (value) => (
+  getHashtagsArr(value)
+    .reduce(
+      (result, hashtag, index, array) => {
+        if (index + 1 < array.length) {
+          result = result && !array.includes(hashtag, index + 1);
+        }
+        return result;
+      },
+      true,
+    )
+);
+
+const validateHashtagMaxQuantity = (value) => getHashtagsArr(value).length <= Hashtag.MAX_COUNT;
+
+const validateHashtagMaxLength = (value) => (
+  getHashtagsArr(value).reduce(
+    (result, hashtag) => (result && hashtag.length <= Hashtag.MAX_SYMBOLS),
+    true
+  )
+);
+
+const validateHashtagLetters = (value) => (
+  getHashtagsArr(value).reduce(
+    (result, hashtag) => {
+      if (hashtag.length > 1) {
+        result = result && !(hashtag.search(/[^А-Яа-яA-Za-zЁё0-9#]+/) + 1);
+      }
+      return result;
+    },
+    true
+  )
+);
+
+const validateHashtagMinLength = (value) => (
+  getHashtagsArr(value).reduce(
+    (result, hashtag) => {
+      if (hashtag.length === 1) {
+        result = result && hashtag !== '#';
+      }
+      return result;
+    },
+    true
+  )
+);
+
+const validateHashtagFirstChar = (value) => (
+  getHashtagsArr(value).reduce(
+    (result, hashtag) => {
+      if (hashtag !== '') {
+        result = result && hashtag[0] === '#';
+      }
+      return result;
+    },
+    true
+  )
+);
+
+const validateHashtagSpaces = (value) => (
+  getHashtagsArr(value).reduce(
+    (result, hashtag) => {
+      if (hashtag.length > 1) {
+        result = result && !hashtag.includes('#', 1);
+      }
+      return result;
+    },
+    true
+  )
+);
+
+pristine.addValidator(hashtagField, validateHashtagFirstChar, HashtagErrorText.START_WITH_GRID);
+pristine.addValidator(hashtagField, validateHashtagMinLength, HashtagErrorText.NOT_ONLY_GRID);
+pristine.addValidator(hashtagField, validateHashtagLetters, HashtagErrorText.ONLY_LETTERS_AND_NUMBERS);
+pristine.addValidator(hashtagField, validateHashtagSpaces, HashtagErrorText.SEPARATED_BY_SPACES);
+pristine.addValidator(hashtagField, validateHashtagMaxLength, HashtagErrorText.MAX_LENGTH_ONE_HASHTAG);
+pristine.addValidator(hashtagField, validateHashtagMaxQuantity, HashtagErrorText.MAX_COUNT_HASHTAGS);
+pristine.addValidator(hashtagField, validateHashtagUnique, HashtagErrorText.NOT_REPEAT);
 
 const blockSubmitButton = () => {
   submitButton.disabled = true;
@@ -87,8 +165,6 @@ const unblockSubmitButton = () => {
   submitButton.disabled = false;
   submitButton.textContent = SubmitButtonText.IDLE;
 };
-
-pristine.addValidator(hashtagField, validateTags, TAG_ERROR_TEXT);
 
 const setOnFormSubmit = (cb) => {
   form.addEventListener('submit', async (evt) => {
