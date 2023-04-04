@@ -9,7 +9,7 @@ const body = document.querySelector('body');
 
 const onSuccessAnywhereClick = (evt) => {
   if (evt.target === successMessage) {
-    document.querySelector('.success').remove();
+    successMessage.remove();
     document.removeEventListener('click', onSuccessAnywhereClick);
     document.removeEventListener('keydown', onSuccessKeydown);
   }
@@ -17,7 +17,7 @@ const onSuccessAnywhereClick = (evt) => {
 
 const onErrorAnywhereClick = (evt) => {
   if (evt.target === errorMessage) {
-    document.querySelector('.error').remove();
+    errorMessage.remove();
     document.removeEventListener('click', onErrorAnywhereClick);
     document.removeEventListener('keydown', onErrorKeydown);
   }
@@ -27,7 +27,7 @@ function onSuccessKeydown(evt) {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     if (successMessage) {
-      document.querySelector('.success').remove();
+      successMessage.remove();
     }
   }
 }
@@ -36,7 +36,7 @@ function onErrorKeydown (evt) {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
     if (errorMessage) {
-      document.querySelector('.error').remove();
+      errorMessage.remove();
       document.addEventListener('keydown', onModalKeydown);
     }
   }
@@ -44,13 +44,13 @@ function onErrorKeydown (evt) {
 
 const onSuccessButtonClick = () => {
   if (successMessage) {
-    document.querySelector('.success').remove();
+    successMessage.remove();
   }
 };
 
 const onErrorButtonClick = () => {
   if (errorMessage) {
-    document.querySelector('.error').remove();
+    errorMessage.remove();
   }
 };
 
